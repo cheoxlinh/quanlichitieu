@@ -70,7 +70,7 @@ try {
     $sheet = $spreadsheet->getActiveSheet();
 
     // Tiêu đề bảng
-    $headers = ['Danh Mục', 'Loại', 'Trạng Thái', 'Ngày', 'Mô Tả', 'Số Tiền', 'Loại Tiền'];
+    $headers = ['Danh Mục', 'Loại', 'Trạng Thái', 'Ngày', 'Mô Tả', 'Số Tiền'];
     $sheet->fromArray($headers, null, 'A1');
 
     // Định dạng tiêu đề: in đậm + màu nền
@@ -88,7 +88,6 @@ try {
         $sheet->setCellValue('D'.$row, $item['date']);
         $sheet->setCellValue('E'.$row, $item['description']);
         $sheet->setCellValue('F'.$row, $item['amount']);
-        $sheet->setCellValue('G'.$row, $item['currency']); // Cột loại tiền
         $row++;
     }
 

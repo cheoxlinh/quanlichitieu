@@ -78,9 +78,12 @@ $statuses = $stmt->fetchAll();
                 </select>
             </div>
 
+            <!-- Ô nhập tiền (hiển thị định dạng) -->
             <div class="form-group currency-input">
                 <label>Số Tiền (<span id="currencySymbol">VND</span>):</label>
-                <input type="text" id="amount" name="amount" required oninput="formatCurrency(this)">
+                <input type="text" id="amountDisplay" required>
+                <!-- Input ẩn chứa giá trị thuần -->
+                <input type="hidden" id="amount" name="amount">
             </div>
 
             <div class="form-group">
@@ -116,36 +119,66 @@ $statuses = $stmt->fetchAll();
                 dateLabel.textContent = 'Tháng:';
             }
         }
+    // Biến lưu trữ giá trị thuần
+    let rawAmount = '';
 
-        // Cập nhật ký hiệu tiền tệ
-        function updateCurrencySymbol() {
-            const currency = document.getElementById('currencySelect').value;
-            document.getElementById('currencySymbol').textContent = currency;
-            formatCurrency(document.getElementById('amount')); // Định dạng lại số tiền nếu có
-        }
+    // Định dạng tiền tệ khi người dùng nhập
+    function formatCurrency(input) {
+        const currency = document.getElementById('currencySelect').value;
+        const amountInput = document.getElementById('amount'); // Input ẩn
 
-        // Định dạng tiền tệ khi nhập
-        function formatCurrency(input) {
-            let value = input.value.replace(/[^0-9.]/g, '');
-            const currency = document.getElementById('currencySelect').value;
+        // Lấy giá trị gốc (chỉ số)
+        let value = input.value.replace(/[^0-9]/g, '');
 
-            if (value) {
-                if (currency === 'VND') {
-                    input.value = parseInt(value).toLocaleString('vi-VN') + ' ₫';
-                } else if (currency === 'USD') {
-                    input.value = parseFloat(value).toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    }) + ' $';
-                }
+        if (value) {
+            rawAmount = value;
+
+            // Cập nhật giá trị thuần vào input ẩn
+            amountInput.value = rawAmount;
+
+            // Định dạng hiển thị theo loại tiền
+            if (currency === 'VND') {
+                input.value = parseInt(rawAmount).toLocaleString('vi-VN') + ' ₫';
+            } else if (currency === 'USD') {
+                input.value = parseFloat(rawAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $';
             }
+        } else {
+            amountInput.value = '';
+            input.value = '';
+            rawAmount = '';
         }
+    }
 
-        // Loại bỏ định dạng trước khi submit
-        function removeCurrencyFormat() {
-            const amountInput = document.getElementById('amount');
-            amountInput.value = amountInput.value.replace(/[^0-9.]/g, '');
+    // Sự kiện nhập liệu
+    document.getElementById('amountDisplay').addEventListener('input', function () {
+        // Chỉ cho phép nhập số
+        this.value = this.value.replace(/[^0-9]/g, '');
+        formatCurrency(this);
+    });
+
+    // Sự kiện thay đổi loại tiền
+    document.getElementById('currencySelect').addEventListener('change', function () {
+        const amountDisplay = document.getElementById('amountDisplay');
+        const amountInput = document.getElementById('amount');
+
+        rawAmount = amountInput.value; // Lấy giá trị từ input ẩn
+
+        if (rawAmount) {
+            if (this.value === 'VND') {
+                amountDisplay.value = parseInt(rawAmount).toLocaleString('vi-VN') + ' ₫';
+            } else if (this.value === 'USD') {
+                amountDisplay.value = parseFloat(rawAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $';
+            }
+        } else {
+            amountDisplay.value = '';
         }
+    });
+
+    // Đảm bảo giá trị thuần được gửi đi
+    function removeCurrencyFormat() {
+        const amountInput = document.getElementById('amount');
+        amountInput.value = amountInput.value.replace(/[^0-9.]/g, '');
+    }
     </script>
 </body>
 </html>

@@ -5,12 +5,14 @@ require 'config/db.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $type = $_POST['type'];
     $category_id = $_POST['category_id'];
-    $amount = $_POST['amount'];
     $status_id = $_POST['status_id'];
     $description = $_POST['description'] ?? '';
     $currency = $_POST['currency'] ?? 'VND';
 
-    // Xử lý ngày hoặc tháng
+    // Lấy giá trị từ input ẩn (chỉ số thuần)
+    $amount = $_POST['amount'] ?? '0';
+
+    // Xử lý ngày/tháng
     $transaction_type = $_POST['transaction_type'];
     $raw_date = $_POST['date'];
 
@@ -27,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute([
         $_SESSION['user_id'],
         $category_id,
-        str_replace(',', '', $amount),
+        $amount,
         $date,
         $status_id,
         $description,
