@@ -39,7 +39,7 @@ h1 {
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
-    color: white;
+    color: rgb(243, 247, 246);
     transition: background 0.3s ease;
 }
 
@@ -97,7 +97,19 @@ h1 {
     background-color: #28a745;
     color: white;
 }
-
+a.btn.clear {
+    color: #f5f1f1;
+    background: #ef4203;
+}
+button.btn.fitter {
+    color: #fff;
+    background: #00bdff;
+}
+select {
+    width: 100px;
+    height: 40px;
+    font-weight: bold;
+}
 .btn.export:hover {
     opacity: 0.9;
 }
@@ -118,7 +130,24 @@ h1 {
 .btn.edit:hover {
     opacity: 0.9;
 }
-
+.form-container {
+    width: 500px;
+    margin: auto;
+}
+a.btn.add {
+    background: #0030ff;
+    color: #fff;
+    display: block;
+    width: 200px;
+    margin: 10px;
+}
+a.btn.expense {
+    background: #e70505;
+    color: #fff;
+    display: block;
+    width: 200px;
+    margin: 10px;
+}
 .btn.delete {
     background-color: #dc3545;
     color: white;

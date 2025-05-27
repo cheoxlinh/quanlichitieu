@@ -24,58 +24,8 @@ $status_id = $_GET['status_id'] ?? '';
 <body>
     <div class="dashboard-container">
         <h1>Quản Lý Thu Chi Cá Nhân</h1>
-
-        <!-- Bộ lọc -->
-        <div class="filter-form">
-            <form method="get" action="">
-                <label>Tháng:</label>
-                <select name="month">
-                    <?php for ($i = 1; $i <= 12; $i++): ?>
-                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>" <?= $month == $i ? 'selected' : '' ?>>
-                            <?= $i ?>
-                        </option>
-                    <?php endfor; ?>
-                </select>
-
-                <label>Năm:</label>
-                <select name="year">
-                    <?php $current_year = date('Y'); ?>
-                    <?php for ($i = $current_year - 5; $i <= $current_year + 5; $i++): ?>
-                        <option value="<?= $i ?>" <?= $year == $i ? 'selected' : '' ?>><?= $i ?></option>
-                    <?php endfor; ?>
-                </select>
-
-                <label>Danh Mục:</label>
-                <select name="category_id">
-                    <option value="">Tất cả</option>
-                    <?php
-                    $stmt = $pdo->query("SELECT * FROM categories ORDER BY type DESC");
-                    $categories = $stmt->fetchAll();
-                    foreach ($categories as $cat): ?>
-                        <option value="<?= $cat['id'] ?>" <?= $category_id == $cat['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($cat['name']) ?> (<?= $cat['type'] == 'income' ? 'Thu nhập' : 'Chi tiêu' ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <label>Trạng Thái:</label>
-                <select name="status_id">
-                    <option value="">Tất cả</option>
-                    <?php
-                    $stmt = $pdo->query("SELECT * FROM transaction_statuses");
-                    $statuses = $stmt->fetchAll();
-                    foreach ($statuses as $status): ?>
-                        <option value="<?= $status['id'] ?>" <?= $status_id == $status['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($status['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <button type="submit">Lọc</button>
-                <a href="dashboard.php" class="btn clear">Xóa Lọc</a>
-            </form>
-        </div>
-
+        <a href="add_transaction.php?type=income" class="btn add">Thêm thu nhập</a>
+        <a href="add_transaction.php" class="btn expense">Thêm chi tiêu</a>
         <!-- Thống kê tổng quan -->
         <div class="stats">
             <?php
@@ -141,72 +91,104 @@ $status_id = $_GET['status_id'] ?? '';
                 <p><?= number_format($total_income - $total_expense, 2) ?> VND</p>
             </div>
         </div>
-        <!-- Trong phần nút chức năng -->
-        <a href="export_report.php?month=<?= $month ?>&year=<?= $year ?>&category_id=<?= $category_id ?>&status_id=<?= $status_id ?>" 
-        class="btn export">📊 Xuất Excel</a>    
+      
         <!-- Bảng giao dịch có lọc -->
-        <h2>Giao Dịch</h2>
-        <table class="transaction-table">
-            <thead>
-                <tr>
-                    <th>Danh Mục</th>
-                    <th>Loại</th>
-                    <th>Số Tiền</th>
-                    <th>Ngày</th>
-                    <th>Trạng Thái</th>
-                    <th>Hành Động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Lấy giao dịch có lọc
-                $sql = "SELECT t.*, c.name AS category, c.type, s.name AS status 
-                       FROM transactions t
-                       JOIN categories c ON t.category_id = c.id
-                       JOIN transaction_statuses s ON t.status_id = s.id
-                       WHERE t.user_id = ?";
-                $params = [$_SESSION['user_id']];
+        <h2>Giao Dịch </h2>
+         <!-- Bộ lọc -->
+        <div class="filter-form">
+            <form method="get" action="">
+                <label>Tháng:</label>
+                <select name="month">
+                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>" <?= $month == $i ? 'selected' : '' ?>>
+                            <?= $i ?>
+                        </option>
+                    <?php endfor; ?>
+                </select>
 
-                if ($month) {
-                    $sql .= " AND MONTH(t.date) = ?";
-                    $params[] = $month;
-                }
-                if ($year) {
-                    $sql .= " AND YEAR(t.date) = ?";
-                    $params[] = $year;
-                }
-                if ($category_id) {
-                    $sql .= " AND t.category_id = ?";
-                    $params[] = $category_id;
-                }
-                if ($status_id) {
-                    $sql .= " AND t.status_id = ?";
-                    $params[] = $status_id;
-                }
+                <label>Năm:</label>
+                <select name="year">
+                    <?php $current_year = date('Y'); ?>
+                    <?php for ($i = $current_year - 5; $i <= $current_year + 5; $i++): ?>
+                        <option value="<?= $i ?>" <?= $year == $i ? 'selected' : '' ?>><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
 
-                $sql .= " ORDER BY t.date DESC LIMIT 10";
+                <label>Danh Mục:</label>
+                <select name="category_id">
+                    <option value="">Tất cả</option>
+                    <?php
+                    $stmt = $pdo->query("SELECT * FROM categories ORDER BY type DESC");
+                    $categories = $stmt->fetchAll();
+                    foreach ($categories as $cat): ?>
+                        <option value="<?= $cat['id'] ?>" <?= $category_id == $cat['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat['name']) ?> (<?= $cat['type'] == 'income' ? 'Thu nhập' : 'Chi tiêu' ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
-                $transactions = $stmt->fetchAll();
-                foreach ($transactions as $t): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($t['category']) ?></td>
-                        <td><?= $t['type'] == 'income' ? 'Thu nhập' : 'Chi tiêu' ?></td>
-                        <td><?= number_format($t['amount'], 2) ?> VND</td>
-                        <td><?= $t['date'] ?></td>
-                        <td><?= $t['status'] ?></td>
-                        <td>
-                            <a href="edit_transaction.php?id=<?= $t['id'] ?>" class="btn edit">Sửa</a>
-                            <a href="delete_transaction.php?id=<?= $t['id'] ?>" class="btn delete" onclick="return confirm('Bạn có chắc chắn muốn xóa giao dịch này?')">Xóa</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                <label>Trạng Thái:</label>
+                <select name="status_id">
+                    <option value="">Tất cả</option>
+                    <?php
+                    $stmt = $pdo->query("SELECT * FROM transaction_statuses");
+                    $statuses = $stmt->fetchAll();
+                    foreach ($statuses as $status): ?>
+                        <option value="<?= $status['id'] ?>" <?= $status_id == $status['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($status['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                        
+                <button type="submit" class="btn fitter">Lọc</button>
+                <a href="dashboard.php" class="btn clear">Xóa Lọc</a>
+                <a href="export_report.php?month=<?= $month ?>&year=<?= $year ?>&category_id=<?= $category_id ?>&status_id=<?= $status_id ?>" 
+        class="btn export">📊 Xuất Excel</a>   
+            </form>
+        </div>
+        
+        <h2>Giao Dịch Gần Nhất</h2>
+<table class="transaction-table">
+    <thead>
+        <tr>
+            <th>Danh Mục</th>
+            <th>Loại</th>
+            <th>Số Tiền</th>
+            <th>Loại Tiền</th>
+            <th>Ngày</th>
+            <th>Trạng Thái</th>
+            <th>Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $stmt = $pdo->prepare("SELECT t.*, c.name AS category, c.type, s.name AS status 
+                              FROM transactions t
+                              JOIN categories c ON t.category_id = c.id
+                              JOIN transaction_statuses s ON t.status_id = s.id
+                              WHERE t.user_id = ? ORDER BY t.date DESC LIMIT 10");
+        $stmt->execute([$_SESSION['user_id']]);
+        $transactions = $stmt->fetchAll();
+        foreach ($transactions as $t): ?>
+            <tr>
+                <td><?= htmlspecialchars($t['category']) ?></td>
+                <td><?= $t['type'] == 'income' ? 'Thu nhập' : 'Chi tiêu' ?></td>
+                <td><?= number_format($t['amount'], 0, '', ',') ?></td>
+                <td><?= $t['currency'] ?></td>
+                <td><?= $t['date'] ?></td>
+                <td><?= $t['status'] ?></td>
+                <td>
+                    <a href="edit_transaction.php?id=<?= $t['id'] ?>" class="btn edit">Sửa</a>
+                    <a href="delete_transaction.php?id=<?= $t['id'] ?>" class="btn delete" onclick="return confirm('Bạn có chắc chắn muốn xóa giao dịch này?')">Xóa</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
 
         <!-- Bảng danh mục -->
         <h2>Danh Mục Hiện Tại</h2>
+        <a href="add_category.php" class="btn add">Thêm danh mục</a>
         <table class="transaction-table">
             <thead>
                 <tr>
