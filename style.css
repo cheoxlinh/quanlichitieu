@@ -1,23 +1,156 @@
+/* Reset cơ bản */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
-    padding: 50px;
+    background-color: #f4f6f8;
+    padding: 20px;
 }
 
-.container {
-    background-color: #fff;
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
     padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Nút chức năng */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 12px 24px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    display: inline-block;
-}
-
-a {
-    color: #007bff;
     text-decoration: none;
+    font-weight: bold;
+    color: white;
+    transition: background 0.3s ease;
 }
 
-a:hover {
-    text-decoration: underline;
+.btn.income {
+    background-color: #28a745;
+}
+
+.btn.expense {
+    background-color: #dc3545;
+}
+
+.btn.export {
+    background-color: #007bff;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* Thống kê tổng quan */
+.stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    flex: 1;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+}
+
+.stat-card.income {
+    background: linear-gradient(135deg, #28a745, #32e05f);
+}
+
+.stat-card.expense {
+    background: linear-gradient(135deg, #dc3545, #ff6b6b);
+}
+
+.stat-card.balance {
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+}
+.btn.category {
+    background-color: #ffc107;
+}
+
+.btn.category:hover {
+    opacity: 0.9;
+}
+.btn.export {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn.export:hover {
+    opacity: 0.9;
+}
+/* Bảng giao dịch */
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.btn.edit {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn.edit:hover {
+    opacity: 0.9;
+}
+
+.btn.delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn.delete:hover {
+    opacity: 0.9;
+}
+.transaction-table thead {
+    background-color: #007bff;
+    color: white;
+}
+
+.transaction-table th,
+.transaction-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.transaction-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats {
+        flex-direction: column;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
 }
