@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 26, 2025 at 10:27 AM
+-- Generation Time: May 27, 2025 at 06:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -38,11 +38,10 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `name`, `type`) VALUES
-(1, 'Lương', 'income'),
-(2, 'Đầu tư', 'income'),
-(3, 'Ăn uống', 'expense'),
-(4, 'Đi lại', 'expense'),
-(5, 'Giải trí', 'expense');
+(8, 'Dripfeedpanel.com', 'expense'),
+(9, 'Smspool', 'expense'),
+(10, 'Sms-Active', 'expense'),
+(11, 'Nạp tiền điện thoại', 'expense');
 
 -- --------------------------------------------------------
 
@@ -54,10 +53,39 @@ CREATE TABLE `transactions` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `date` date NOT NULL,
-  `description` text DEFAULT NULL
+  `amount` decimal(10,0) NOT NULL,
+  `date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `description` text CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `status_id` int(11) NOT NULL DEFAULT 1,
+  `currency` varchar(3) NOT NULL DEFAULT 'VND'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`id`, `user_id`, `category_id`, `amount`, `date`, `description`, `status_id`, `currency`) VALUES
+(6, 1, 8, 1000000, '2025-02-02 00:00:00', 'ok', 1, 'VND');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transaction_statuses`
+--
+
+CREATE TABLE `transaction_statuses` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transaction_statuses`
+--
+
+INSERT INTO `transaction_statuses` (`id`, `name`) VALUES
+(1, 'Hoàn tất'),
+(2, 'Đang xử lý'),
+(3, 'Hủy');
 
 -- --------------------------------------------------------
 
@@ -95,7 +123,14 @@ ALTER TABLE `categories`
 ALTER TABLE `transactions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `category_id` (`category_id`);
+  ADD KEY `category_id` (`category_id`),
+  ADD KEY `status_id` (`status_id`);
+
+--
+-- Indexes for table `transaction_statuses`
+--
+ALTER TABLE `transaction_statuses`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `users`
@@ -112,13 +147,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `transaction_statuses`
+--
+ALTER TABLE `transaction_statuses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -135,7 +176,8 @@ ALTER TABLE `users`
 --
 ALTER TABLE `transactions`
   ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
+  ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
+  ADD CONSTRAINT `transactions_ibfk_3` FOREIGN KEY (`status_id`) REFERENCES `transaction_statuses` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
