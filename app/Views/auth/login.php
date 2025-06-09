@@ -1,8 +1,8 @@
-<?php require_once '../app/Views/layouts/header.php'; ?>
+<?php require_once ROOT_PATH . '/app/Views/layouts/header.php'; ?>
 <div class="container" style="max-width: 400px; margin-top: 100px;">
     <div class="content-box">
         <h2>Login</h2>
-        <form action="authenticate" method="POST">
+        <form action="<?php echo BASE_URL; ?>/auth/authenticate" method="POST">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required value="admin">
@@ -15,4 +15,4 @@
         </form>
     </div>
 </div>
-<?php require_once '../app/Views/layouts/footer.php'; ?>
+<?php require_once ROOT_PATH . '/app/Views/layouts/footer.php'; ?>

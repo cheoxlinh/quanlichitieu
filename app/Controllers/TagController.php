@@ -18,7 +18,8 @@ class TagController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $tagModel = $this->model('Tag');
             $tagModel->create($_POST);
-            header('Location: ../tags');
+            header('Location: ' . BASE_URL . '/tags');
+            exit();
         }
     }
     
@@ -32,7 +33,8 @@ class TagController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $tagModel = $this->model('Tag');
             $tagModel->update($id, $_POST);
-            header('Location: ../../tags');
+            header('Location: ' . BASE_URL . '/tags');
+            exit();
         }
     }
     
@@ -40,7 +42,8 @@ class TagController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $tagModel = $this->model('Tag');
             $tagModel->delete($id);
-            header('Location: ../../tags');
+            header('Location: ' . BASE_URL . '/tags');
+            exit();
         }
     }
 }

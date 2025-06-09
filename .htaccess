@@ -1,0 +1,13 @@
+
+    RewriteEngine On
+
+    # Đặt thư mục gốc của dự án trên máy chủ
+    # Nếu dự án của bạn nằm trong thư mục con, ví dụ: localhost/quanlichitieu
+    # thì hãy đặt là /quanlichitieu/
+    RewriteBase /quanlichitieu/
+
+    # Chuyển hướng tất cả các yêu cầu đến tệp tin index.php ở thư mục public
+    RewriteRule ^$ public/ [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]

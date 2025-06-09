@@ -1,11 +1,19 @@
-<?php require_once '../app/Views/layouts/header.php'; ?>
+<?php require_once ROOT_PATH . '/app/Views/layouts/header.php'; ?>
 <div class="container">
     <h1>Create Transaction</h1>
     <div class="content-box">
-        <form action="store" method="POST">
+        <form action="<?php echo BASE_URL; ?>/transactions/store" method="POST">
             <div class="form-group">
-                <label for="amount">Amount *</label>
-                <input type="number" name="amount" required>
+                <label for="formatted-amount">Amount *</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="formatted-amount" inputmode="numeric" required style="flex: 3; text-align: left;">
+                    <input type="hidden" name="amount" id="actual-amount">
+
+                    <select name="currency" style="flex: 1;">
+                        <option value="VND" <?php echo ($settings['currency'] == 'VND') ? 'selected' : ''; ?>>VNĐ</option>
+                        <option value="USD" <?php echo ($settings['currency'] == 'USD') ? 'selected' : ''; ?>>USD</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label for="transaction_type">Transaction type *</label>
@@ -36,8 +44,8 @@
                 <textarea name="note"></textarea>
             </div>
             <button type="submit" class="button">Create</button>
-            <a href="../transactions" class="button cancel">Cancel</a>
+            <a href="<?php echo BASE_URL; ?>/transactions" class="button cancel">Cancel</a>
         </form>
     </div>
 </div>
-<?php require_once '../app/Views/layouts/footer.php'; ?>
+<?php require_once ROOT_PATH . '/app/Views/layouts/footer.php'; ?>

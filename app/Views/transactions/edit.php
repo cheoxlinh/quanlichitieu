@@ -1,11 +1,19 @@
-<?php require_once '../app/Views/layouts/header.php'; ?>
+<?php require_once ROOT_PATH . '/app/Views/layouts/header.php'; ?>
 <div class="container">
     <h1>Edit Transaction #<?php echo $transaction['id']; ?></h1>
     <div class="content-box">
-        <form action="../update/<?php echo $transaction['id']; ?>" method="POST">
-             <div class="form-group">
-                <label for="amount">Amount *</label>
-                <input type="number" name="amount" required value="<?php echo htmlspecialchars($transaction['amount']); ?>">
+        <form action="<?php echo BASE_URL; ?>/transactions/update/<?php echo $transaction['id']; ?>" method="POST">
+            <div class="form-group">
+                <label for="formatted-amount">Amount *</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="formatted-amount" inputmode="numeric" required style="flex: 3; text-align: left;">
+                    <input type="hidden" name="amount" id="actual-amount" value="<?php echo htmlspecialchars($transaction['amount']); ?>">
+
+                    <select name="currency" style="flex: 1;">
+                        <option value="VND" <?php echo ($transaction['currency'] == 'VND') ? 'selected' : ''; ?>>VNĐ</option>
+                        <option value="USD" <?php echo ($transaction['currency'] == 'USD') ? 'selected' : ''; ?>>USD</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label for="transaction_type">Transaction type *</label>
@@ -38,8 +46,8 @@
                 <textarea name="note"><?php echo htmlspecialchars($transaction['note']); ?></textarea>
             </div>
             <button type="submit" class="button">Update</button>
-            <a href="../../transactions" class="button cancel">Cancel</a>
+            <a href="<?php echo BASE_URL; ?>/transactions" class="button cancel">Cancel</a>
         </form>
     </div>
 </div>
-<?php require_once '../app/Views/layouts/footer.php'; ?>
+<?php require_once ROOT_PATH . '/app/Views/layouts/footer.php'; ?>

@@ -6,36 +6,67 @@ class Transaction {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function findAll($filters = []) {
-        $sql = "SELECT t.*, tt.name AS tag_name 
-                FROM transactions t 
-                LEFT JOIN transaction_tags tt ON t.tag_id = tt.id 
-                WHERE 1=1";
-        $params = [];
-
+    // Hàm xây dựng điều kiện WHERE chung
+    private function buildWhereClause($filters, &$params) {
+        $whereSql = " WHERE 1=1 ";
         if (!empty($filters['status'])) {
-            $sql .= " AND t.status = ?";
+            $whereSql .= " AND t.status = ?";
             $params[] = $filters['status'];
         }
         if (!empty($filters['transaction_type'])) {
-            $sql .= " AND t.transaction_type = ?";
+            $whereSql .= " AND t.transaction_type = ?";
             $params[] = $filters['transaction_type'];
         }
-        if (!empty($filters['tag_id'])) {
-            $sql .= " AND t.tag_id = ?";
-            $params[] = $filters['tag_id'];
-        }
         if (!empty($filters['created_date'])) {
-            $sql .= " AND DATE(t.created_at) = ?";
+            $whereSql .= " AND DATE(t.created_at) = ?";
             $params[] = $filters['created_date'];
         }
+        // Lọc nhiều tag
+        if (!empty($filters['tag_ids']) && is_array($filters['tag_ids'])) {
+            $placeholders = implode(',', array_fill(0, count($filters['tag_ids']), '?'));
+            $whereSql .= " AND t.tag_id IN (" . $placeholders . ")";
+            foreach ($filters['tag_ids'] as $tag_id) {
+                $params[] = $tag_id;
+            }
+        }
+        return $whereSql;
+    }
+
+    // Hàm đếm tổng số giao dịch theo bộ lọc
+    public function countAll($filters = []) {
+        $params = [];
+        $sql = "SELECT COUNT(t.id) as total FROM transactions t";
+        $sql .= $this->buildWhereClause($filters, $params);
         
-        $sql .= " ORDER BY t.created_at DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
+        return $stmt->fetch()['total'];
+    }
+
+    // Hàm tìm kiếm có phân trang
+    public function findAll($filters = [], $limit = 10, $offset = 0) {
+        $params = [];
+        $sql = "SELECT t.*, tt.name AS tag_name 
+                FROM transactions t 
+                LEFT JOIN transaction_tags tt ON t.tag_id = tt.id";
+        
+        $sql .= $this->buildWhereClause($filters, $params);
+        
+        $sql .= " ORDER BY t.created_at DESC LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+        
+        $stmt = $this->db->prepare($sql);
+        // Bind các tham số với kiểu dữ liệu chính xác
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key + 1, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
         return $stmt->fetchAll();
     }
 
+    // Các hàm còn lại (findById, create, update, delete) giữ nguyên
     public function findById($id) {
         $stmt = $this->db->prepare("SELECT * FROM transactions WHERE id = ?");
         $stmt->execute([$id]);
@@ -43,23 +74,38 @@ class Transaction {
     }
 
     public function create($data) {
-        $sql = "INSERT INTO transactions (amount, transaction_type, status, tag_id, note, created_by) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
-            $data['amount'],
-            $data['transaction_type'],
-            $data['status'],
-            $data['tag_id'] ?: null,
-            $data['note'],
-            $_SESSION['user_id']
-        ]);
+    $sql = "INSERT INTO transactions (amount, currency, transaction_type, status, tag_id, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $this->db->prepare($sql);
+
+    // --- BƯỚC GỠ LỖI: THÊM ĐOẠN CODE NÀY VÀO ---
+    if ($stmt === false) {
+        echo "Lỗi khi chuẩn bị câu lệnh SQL!<br>";
+        echo "Câu lệnh SQL: " . $sql . "<br>";
+        echo "Thông tin lỗi từ Database: <pre>";
+        print_r($this->db->errorInfo());
+        echo "</pre>";
+        die(); // Dừng chương trình để xem lỗi
+    }
+    // --- KẾT THÚC BƯỚC GỠ LỖI ---
+
+    return $stmt->execute([
+        $data['amount'],
+        $data['currency'],
+        $data['transaction_type'],
+        $data['status'],
+        $data['tag_id'] ?: null,
+        $data['note'],
+        $_SESSION['user_id']
+    ]);
     }
 
     public function update($id, $data) {
-        $sql = "UPDATE transactions SET amount = ?, transaction_type = ?, status = ?, tag_id = ?, note = ? WHERE id = ?";
+        $sql = "UPDATE transactions SET amount = ?, currency = ?, transaction_type = ?, status = ?, tag_id = ?, note = ? WHERE id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $data['amount'],
+            $data['currency'], // Thêm dữ liệu currency
             $data['transaction_type'],
             $data['status'],
             $data['tag_id'] ?: null,
@@ -71,5 +117,33 @@ class Transaction {
     public function delete($id) {
         $stmt = $this->db->prepare("DELETE FROM transactions WHERE id = ?");
         return $stmt->execute([$id]);
+    }
+
+    // Thêm phương thức này vào cuối class Transaction
+    public function sumAll($filters = [], $exchange_rate = 26500) {
+        $params = [];
+        // Sử dụng CASE để quy đổi USD sang VND trước khi tính tổng
+        $sql = "SELECT SUM(
+                    CASE
+                        WHEN t.currency = 'USD' THEN t.amount * ?
+                        ELSE t.amount
+                    END
+                ) as total_amount 
+                FROM transactions t";
+
+        // Tham số đầu tiên luôn là tỉ giá
+        $queryParams = [$exchange_rate];
+
+        // Lấy các điều kiện WHERE và các tham số của nó
+        $whereSql = $this->buildWhereClause($filters, $params);
+        $sql .= $whereSql;
+
+        // Gộp các tham số lại
+        $finalParams = array_merge($queryParams, $params);
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($finalParams);
+        $result = $stmt->fetch();
+        return $result['total_amount'] ?? 0;
     }
 }
