@@ -1,0 +1,149 @@
+:root {
+    --bg-color: #161b22;
+    --primary-color: #21262d;
+    --border-color: #30363d;
+    --text-color: #c9d1d9;
+    --text-secondary-color: #8b949e;
+    --accent-color: #f78166;
+    --success-color: #3fb950;
+    --success-bg: rgba(63, 185, 80, 0.15);
+    --revenue-color: #a371f7;
+    --revenue-bg: rgba(163, 113, 247, 0.15);
+    --order-color: #ffc107;
+    --order-bg: rgba(255, 193, 7, 0.15);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    margin: 0;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.main-nav {
+    background-color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main-nav .nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    margin-right: 20px;
+    font-weight: 600;
+}
+.main-nav .nav-links a.active {
+    color: var(--accent-color);
+}
+.main-nav .user-actions a {
+     color: var(--text-secondary-color);
+     text-decoration: none;
+}
+
+
+h1, h2 {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    font-weight: 400;
+}
+
+.content-box {
+    background-color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 24px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+th {
+    background-color: #2c313a;
+}
+tbody tr:hover {
+    background-color: #2c313a;
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+.button, button {
+    background-color: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+}
+button.cancel {
+    background-color: #484f58;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+input[type="text"], input[type="password"], input[type="number"], select, textarea {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+textarea {
+    min-height: 100px;
+}
+
+.pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 12px;
+}
+.pill.success {
+    background-color: var(--success-bg);
+    color: var(--success-color);
+}
+.pill.revenue {
+    background-color: var(--revenue-bg);
+    color: var(--revenue-color);
+}
+.pill.order {
+    background-color: var(--order-bg);
+    color: var(--order-color);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
