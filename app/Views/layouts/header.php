@@ -14,6 +14,7 @@
             <div class="nav-links">
             <a href="<?php echo BASE_URL; ?>/transactions">Transactions</a>
             <a href="<?php echo BASE_URL; ?>/tags">Transaction Tags</a>
+            <a href="<?php echo BASE_URL; ?>/report">Reports</a> 
             <a href="<?php echo BASE_URL; ?>/setting">Settings</a> 
         </div>
         </div>

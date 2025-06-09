@@ -74,11 +74,15 @@ class TransactionController extends Controller {
         }
     }
 
+    // Sửa lại phương thức destroy()
     public function destroy($id) {
-         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $transactionModel = $this->model('Transaction');
             $transactionModel->delete($id);
+            // Cập nhật lại lệnh chuyển hướng
             header('Location: ' . BASE_URL . '/transactions');
+            exit(); // Thêm exit() để đảm bảo dừng thực thi ngay lập tức
         }
     }
+    
 }

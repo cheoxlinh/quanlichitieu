@@ -17,9 +17,13 @@ class Transaction {
             $whereSql .= " AND t.transaction_type = ?";
             $params[] = $filters['transaction_type'];
         }
-        if (!empty($filters['created_date'])) {
-            $whereSql .= " AND DATE(t.created_at) = ?";
-            $params[] = $filters['created_date'];
+        if (!empty($filters['date_from'])) {
+        $whereSql .= " AND DATE(t.created_at) >= ?";
+        $params[] = $filters['date_from'];
+        }
+        if (!empty($filters['date_to'])) {
+            $whereSql .= " AND DATE(t.created_at) <= ?";
+            $params[] = $filters['date_to'];
         }
         // Lọc nhiều tag
         if (!empty($filters['tag_ids']) && is_array($filters['tag_ids'])) {
@@ -145,5 +149,44 @@ class Transaction {
         $stmt->execute($finalParams);
         $result = $stmt->fetch();
         return $result['total_amount'] ?? 0;
+    }
+
+    // Thêm phương thức này vào cuối class Transaction
+    public function getMonthlySummary($exchange_rate = 26500) {
+        // Câu lệnh SQL này nhóm giao dịch theo Năm và Tháng,
+        // sau đó tính tổng Revenue và Expense cho mỗi nhóm.
+        // Nó cũng tự động quy đổi USD sang VND trước khi tính tổng.
+        $sql = "
+            SELECT
+                YEAR(created_at) as year,
+                MONTH(created_at) as month,
+                SUM(
+                    CASE
+                        WHEN transaction_type = 'Revenue' THEN
+                            CASE WHEN currency = 'USD' THEN amount * ? ELSE amount END
+                        ELSE 0
+                    END
+                ) as total_revenue,
+                SUM(
+                    CASE
+                        WHEN transaction_type = 'Expense' THEN
+                            CASE WHEN currency = 'USD' THEN amount * ? ELSE amount END
+                        ELSE 0
+                    END
+                ) as total_expense
+            FROM
+                transactions
+            GROUP BY
+                YEAR(created_at),
+                MONTH(created_at)
+            ORDER BY
+                year DESC,
+                month DESC
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        // Cần truyền tỉ giá 2 lần, một cho Revenue và một cho Expense
+        $stmt->execute([$exchange_rate, $exchange_rate]);
+        return $stmt->fetchAll();
     }
 }

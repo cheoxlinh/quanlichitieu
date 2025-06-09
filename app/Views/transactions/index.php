@@ -50,8 +50,14 @@
                         <td><span class="pill order"><?php echo htmlspecialchars($t['tag_name']); ?></span></td>
                         <td><span class="pill success"><?php echo htmlspecialchars($t['status']); ?></span></td>
                         <td><?php echo htmlspecialchars($t['note']); ?></td>
-                        <td><?php echo date('Y-m-d H:i:s', strtotime($t['created_at'])); ?></td>
-                        <td><a href="<?php echo BASE_URL; ?>/transactions/edit/<?php echo $t['id']; ?>">Edit</a></td>
+                        <td><?php echo date('m-d-Y H:i:s', strtotime($t['created_at'])); ?></td>
+                        <td style="display: flex; gap: 10px;">
+                            <a href="<?php echo BASE_URL; ?>/transactions/edit/<?php echo $t['id']; ?>">Edit</a>
+                            
+                            <form action="<?php echo BASE_URL; ?>/transactions/destroy/<?php echo $t['id']; ?>" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa giao dịch này không?');">
+                                <button type="submit" class="link-button">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -83,8 +89,12 @@
             <h3>Filters</h3>
             <form action="" method="GET">
                 <div class="form-group">
-                    <label for="created_date">Created Date</label>
-                    <input type="date" name="created_date" id="created_date" value="<?php echo htmlspecialchars($filters['created_date'] ?? ''); ?>">
+                    <label for="date_from">From Date</label>
+                    <input type="date" name="date_from" id="date_from" value="<?php echo htmlspecialchars($filters['date_from'] ?? ''); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="date_to">To Date</label>
+                    <input type="date" name="date_to" id="date_to" value="<?php echo htmlspecialchars($filters['date_to'] ?? ''); ?>">
                 </div>
                 <div class="form-group">
                     <label for="transaction_type">Transaction type</label>
