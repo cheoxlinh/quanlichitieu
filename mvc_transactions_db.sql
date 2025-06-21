@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 09, 2025 at 09:38 AM
+-- Generation Time: Jun 21, 2025 at 11:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -38,7 +38,7 @@ CREATE TABLE `settings` (
 
 INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('currency', 'VND'),
-('usd_to_vnd_rate', '26052.167');
+('usd_to_vnd_rate', '26073.9368');
 
 -- --------------------------------------------------------
 
@@ -66,7 +66,20 @@ CREATE TABLE `transactions` (
 INSERT INTO `transactions` (`id`, `amount`, `currency`, `transaction_type`, `status`, `tag_id`, `note`, `created_by`, `created_at`, `updated_at`) VALUES
 (15, 20000000, 'VND', 'Expense', 'Success', 10, 'Đổ đất ruộng ,làm ao	', 1, '2025-06-09 07:34:06', '2025-06-09 07:34:10'),
 (16, 10000000, 'VND', 'Expense', 'Success', 10, 'Đổ đất ruộng ,làm ao	', 1, '2025-06-09 07:34:23', '2025-06-09 07:34:23'),
-(17, 10000000, 'VND', 'Expense', 'Success', 10, 'Đổ đất ruộng ,làm ao	', 1, '2025-06-09 07:34:35', '2025-06-09 07:34:35');
+(17, 10000000, 'VND', 'Expense', 'Success', 10, 'Đổ đất ruộng ,làm ao	', 1, '2025-06-09 07:34:35', '2025-06-09 07:34:35'),
+(18, 500000, 'VND', 'Expense', 'Success', 9, 'Minh Tục hữu lộc ,gửi chị Thanh', 1, '2025-06-18 03:42:12', '2025-06-18 03:42:12'),
+(19, 200000, 'VND', 'Expense', 'Success', 9, 'Trung Kỳ,GIẢNG TÍN', 1, '2025-06-18 08:23:12', '2025-06-18 08:23:19'),
+(20, 200000, 'VND', 'Expense', 'Success', 9, 'CHÚ TÙNG CÓC,GIẢNG TÍN', 1, '2025-06-18 08:23:52', '2025-06-18 08:23:52'),
+(21, 200000, 'VND', 'Expense', 'Success', 9, 'A BÌNH BẢO,GIẢNG TÍN', 1, '2025-06-18 08:25:31', '2025-06-18 08:25:31'),
+(22, 300000, 'VND', 'Expense', 'Success', 9, 'LINH TRUYỀN,GIẢNG TÍN', 1, '2025-06-18 08:25:57', '2025-06-18 08:25:57'),
+(23, 200000, 'VND', 'Expense', 'Success', 9, 'NGA LỤA,GIẢNG TÍN', 1, '2025-06-18 08:26:15', '2025-06-18 08:26:15'),
+(24, 200000, 'VND', 'Expense', 'Success', 9, 'ỤT LỤA ,GIẢNG TÍN', 1, '2025-06-18 08:26:37', '2025-06-18 08:26:37'),
+(25, 200000, 'VND', 'Expense', 'Success', 9, 'BÌNH HẢO,GIẢNG TÍN', 1, '2025-06-18 08:26:54', '2025-06-18 08:26:54'),
+(26, 200000, 'VND', 'Expense', 'Success', 9, 'QUYỀN UYỂN,GIẢNG TÍN', 1, '2025-06-18 08:27:16', '2025-06-18 08:27:16'),
+(27, 200000, 'VND', 'Expense', 'Success', 9, 'CHÚ HOÀI,GIẢNG TÍN', 1, '2025-06-18 08:27:34', '2025-06-18 08:27:34'),
+(28, 200000, 'VND', 'Expense', 'Success', 9, 'O BÉ CHÍNH,GIẢNG TÍN', 1, '2025-06-18 08:27:50', '2025-06-18 08:27:50'),
+(29, 200000, 'VND', 'Expense', 'Success', 9, 'HẠNH CƠ,GIẢNG TÍN', 1, '2025-06-18 08:28:05', '2025-06-18 08:28:05'),
+(30, 500000, 'VND', 'Expense', 'Success', 9, 'ANH TÍNH,GIẢNG TÍN', 1, '2025-06-18 08:28:20', '2025-06-18 08:28:20');
 
 -- --------------------------------------------------------
 
@@ -149,7 +162,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `transaction_tags`
